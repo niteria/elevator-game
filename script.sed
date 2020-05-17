@@ -1,4 +1,4 @@
 /HASKELL/ {
-  r all.min.js
+  r bin/all.min.js
   d
 }

@@ -1,0 +1,6 @@
+#!/bin/bash
+set -ex
+ghcjs Main.hs
+closure-compiler --compilation_level ADVANCED_OPTIMIZATIONS --jscomp_off=checkVars --externs=Main.jsexe/all.js.externs --externs=elevator.js.externs  Main.jsexe/all.js > all.min.js
+#cp Main.jsexe/all.js all.min.js
+sed -f script.sed tpl.js > out.js

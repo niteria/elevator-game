@@ -3,7 +3,8 @@ with (import (builtins.fetchTarball {
   sha256 = "0kg9lg18qdsnb6gw3jmnl49widzf5cy151bls7k09d5dxlm0myd8";
 }) {});
 let ghc = pkgs.haskell.packages.ghcjs86.ghcWithPackages(pkgs: with pkgs; [ghcjs-base]);
+    inherit (pkgs) closurecompiler;
 in 
 pkgs.mkShell {
-  buildInputs = [ghc];
+  buildInputs = [ghc closurecompiler];
 }

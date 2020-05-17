@@ -2,6 +2,7 @@
 set -ex
 mkdir -p bin
 ghcjs Main.hs -odir bin -hidir bin -o bin/Main
-closure-compiler --compilation_level ADVANCED_OPTIMIZATIONS --jscomp_off=checkVars --externs=bin/Main.jsexe/all.js.externs --externs=elevator.js.externs bin/Main.jsexe/all.js > bin/all.min.js
-#cp bin/Main.jsexe/all.js bin/all.min.js
+sed -e 's/h[$]main[(]h[$]mainZCZCMainzimain[)];/h$runSync(h$mainZCZCMainzimain);/' bin/Main.jsexe/all.js > bin/Main.jsexe/all-sync.js
+closure-compiler --compilation_level ADVANCED_OPTIMIZATIONS --jscomp_off=checkVars --externs=bin/Main.jsexe/all.js.externs --externs=elevator.js.externs bin/Main.jsexe/all-sync.js > bin/all.min.js
+#cp bin/Main.jsexe/all-sync.js bin/all.min.js
 sed -f script.sed tpl.js > bin/out.js

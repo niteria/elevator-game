@@ -1,4 +1,4 @@
 (function() {
   HASKELL
-  return { init: init, update: update }
+  return mkCode();
 })()

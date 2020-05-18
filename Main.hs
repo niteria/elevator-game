@@ -15,7 +15,7 @@ import Prelude hiding (init)
 
 exampleInit :: MVar Int -> InitFunc
 exampleInit mvar (elevator:_) _ = do
-  on elevator "idle" $ do
+  onIdle elevator $ do
     count <- modifyMVar mvar (return . (\a -> (a, a)) . (+ 1))
     goToFloor elevator 0
     goToFloor elevator 1

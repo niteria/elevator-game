@@ -36,7 +36,7 @@ goToFloor e f = FFI.goToFloor (coerce e) (pack $ show f)
 
 type InitFunc = [Elevator] -> [Floor] -> IO ()
 
-type UpdateFunc = Int -> [Elevator] -> [Floor] -> IO () -- TODO: is it Int or Double?
+type UpdateFunc = Double -> [Elevator] -> [Floor] -> IO ()
 
 data Code =
   Code

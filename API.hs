@@ -168,19 +168,20 @@ getPressedFloors = getter FFI.getPressedFloors
 -- | Triggered when the elevator has completed all its tasks and is not doing
 -- anything.
 onIdle :: Elevator -> IO () -> IO ()
-onIdle e f = FFI.onIdle (coerce e) =<< asyncCallback f
+onIdle e f = FFI.onIdle (coerce e) =<< syncCallback ThrowWouldBlock f
 
 -- | Triggered when a passenger has pressed a button inside the elevator.
 onFloorButtonPressed :: Elevator -> (Int -> IO ()) -> IO ()
 onFloorButtonPressed e f =
   FFI.onFloorButtonPressed (coerce e) =<<
-  asyncCallback1 (\jsVal -> f . fromJust =<< fromJSVal jsVal)
+  syncCallback1 ThrowWouldBlock (\jsVal -> f . fromJust =<< fromJSVal jsVal)
 
 -- | Triggered slightly before the elevator will pass a floor. A good time to decide whether to stop at that floor. Note that this event is not triggered for the destination floor. Direction is either "up" or "down".
 onPassingFloor :: Elevator -> (Int -> Direction -> IO ()) -> IO ()
 onPassingFloor e f =
   FFI.onPassingFloor (coerce e) =<<
-  asyncCallback2
+  syncCallback2
+    ThrowWouldBlock
     (\jsFloor jsDir -> do
        floor <- fromJust <$> fromJSVal jsFloor
        dir <- parseDirStr . fromJust <$> fromJSVal jsDir
@@ -190,7 +191,7 @@ onPassingFloor e f =
 onStoppedAtFloor :: Elevator -> (Int -> IO ()) -> IO ()
 onStoppedAtFloor e f =
   FFI.onStoppedAtFloor (coerce e) =<<
-  asyncCallback1 (\jsVal -> f . fromJust =<< fromJSVal jsVal)
+  syncCallback1 ThrowWouldBlock (\jsVal -> f . fromJust =<< fromJSVal jsVal)
 
 -- Floor API
 -- | Gets the floor number of the floor object.
@@ -201,13 +202,13 @@ floorNum = getter FFI.floorNum
 -- passengers will press the button again if they fail to enter an elevator.
 onUpButtonPressed :: Floor -> IO () -> IO ()
 onUpButtonPressed floor f =
-  FFI.onUpButtonPressed (coerce floor) =<< asyncCallback f
+  FFI.onUpButtonPressed (coerce floor) =<< syncCallback ThrowWouldBlock f
 
 -- | Triggered when someone has pressed the down button at a floor. Note that
 -- passengers will press the button again if they fail to enter an elevator.
 onDownButtonPressed :: Floor -> IO () -> IO ()
 onDownButtonPressed floor f =
-  FFI.onDownButtonPressed (coerce floor) =<< asyncCallback f
+  FFI.onDownButtonPressed (coerce floor) =<< syncCallback ThrowWouldBlock f
 
 -- Code object
 type InitFunc = [Elevator] -> [Floor] -> IO ()
@@ -223,12 +224,12 @@ data Code =
 setupMkCode :: Code -> IO ()
 setupMkCode Code {..} = do
   initFFI <-
-    asyncCallback2 $ \elevators floors -> do
+    syncCallback2 ThrowWouldBlock $ \elevators floors -> do
       elevators' <- coerce . fromJust <$> fromJSVal @[JSVal] elevators
       floors' <- coerce . fromJust <$> fromJSVal @[JSVal] floors
       init elevators' floors'
   updateFFI <-
-    asyncCallback3 $ \dt elevators floors -> do
+    syncCallback3 ThrowWouldBlock $ \dt elevators floors -> do
       dt' <- fromJust <$> fromJSVal dt
       elevators' <- coerce . fromJust <$> fromJSVal @[JSVal] elevators
       floors' <- coerce . fromJust <$> fromJSVal @[JSVal] floors

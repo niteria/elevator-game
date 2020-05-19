@@ -4,7 +4,9 @@
 module API
   -- Game API
   -- Elevator
-  ( goToFloor
+  ( Elevator
+  , goToFloor
+  , goToFloorNow
   , stop
   , currentFloor
   , getGoingUpIndicator
@@ -23,9 +25,13 @@ module API
   , onPassingFloor
   , onStoppedAtFloor
   -- Floor
+  , Floor
   , floorNum
   , onUpButtonPressed
   , onDownButtonPressed
+  -- Directions
+  , Direction(..)
+  , DirectionOrStopped(..)
   -- setup
   , Code(..)
   , InitFunc
